@@ -49,7 +49,7 @@ CREATE TABLE SHOPPING_CART
 
 CREATE TABLE STORAGE 
 (ISBN varchar(20) NOT NULL,
-  w_id INteger not NULL,
+  w_id INTEGER not NULL,
   amount integer not NULL,
   PRIMARY key(w_id, ISBN),
   FOREIGN key(ISBN) REFERENCES BOOK(ISBN),
@@ -57,10 +57,10 @@ CREATE TABLE STORAGE
 );
 
 CREATE TABLE WAREHOUSE
-(w_id INteger not NULL,
+(w_id INTEGER not NULL,
   city varchar(15),
   address varchar(30),
-  phone_number,
+  phone_number INTEGER,
   PRIMARY key(w_id)
 );
 

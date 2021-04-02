@@ -88,12 +88,13 @@ book <- goodread_books %>%
 
 national_names <- read_csv("data/NationalNames.csv")
 
-N_CUSTOMER = 1000
+
 pseduo_id <- sample(
-  ceiling(rnorm(10000, mean = 16000, sd = 1000)),
-  size = N_CUSTOMER,
+  ceiling(rnorm(100000, mean = 16000, sd = 1000)),
+  size = 1000,
   replace = F
 )
+N_CUSTOMER = length(unique(pseduo_id))
 pseduo_name <- sample(
   national_names %>% distinct(Name) %>% pull(),
   size = N_CUSTOMER,
@@ -105,23 +106,39 @@ pseduo_phone <- sample(
   replace = F
 )
 customer <-   tibble(
-    account_id = pseduo_id,
+    Account_id = unique(pseduo_id),
     name = pseduo_name,
     phone_number = pseduo_phone
   )
 
+N_PUBLISHER = book %>% distinct(publisher_name) %>% pull() %>% length()
+pseduo_phone <- sample(
+  ceiling(rnorm(10000, mean = 18007678, sd = 800)),
+  size = N_PUBLISHER,
+  replace = F
+)
+pseduo_address <- 
+  sample(
+    letters,
+    size = N_PUBLISHER,
+    replace = T
+  )
 publisher <- tibble(
   name = book %>% distinct(publisher_name) %>% pull(),
-  email = NA,
-  phone = NA,
-  address = NA
+  email = paste0(pseduo_phone, "@gmail.com"),
+  phone = pseduo_phone,
+  address = pseduo_address
 )
 
 warehouse <- tibble(
   w_id = c(1, 2, 3, 4, 5),
   city = c("Columbus", "New York City", "Boston", "Columbus", "Miami"),
-  address = NA,
-  phone_number = NA
+  address = c("Columbus", "New York City", "Boston", "Columbus", "Miami"),
+  phone_number = sample(
+    ceiling(rnorm(10000, mean = 18007678, sd = 800)),
+    size = 5,
+    replace = F
+  )
 )
 
 unique_book <- book %>% distinct(ISBN) %>% pull()
@@ -154,19 +171,57 @@ shopping_cart <- tibble(
 # ================================================================ #
 
 # Create an ephemeral in-memory RSQLite database
-con <- dbConnect(RSQLite::SQLite(), "data/onlineBookStore.sqlite")
-dbWriteTable(con, "CUSTOMER", customer, overwrite = TRUE)
-dbWriteTable(con, "BOOK", book, overwrite = TRUE)
-dbWriteTable(con, "PUBLISHER", publisher, overwrite = TRUE)
-dbWriteTable(con, "WAREHOUSE", warehouse, overwrite = TRUE)
-dbWriteTable(con, "SHOPPING_CART", shopping_cart, overwrite = TRUE)
-dbWriteTable(con, "PURCHASE_HISTORY", purchase_history, overwrite = TRUE)
-dbWriteTable(con, "STORAGE", storage, overwrite = TRUE)
+# con <- dbConnect(RSQLite::SQLite(), "data/onlineBookStore.sqlite")
+# dbWriteTable(con, "CUSTOMER", customer, overwrite = TRUE)
+# dbWriteTable(con, "BOOK", book, overwrite = TRUE)
+# dbWriteTable(con, "PUBLISHER", publisher, overwrite = TRUE)
+# dbWriteTable(con, "WAREHOUSE", warehouse, overwrite = TRUE)
+# dbWriteTable(con, "SHOPPING_CART", shopping_cart, overwrite = TRUE)
+# dbWriteTable(con, "PURCHASE_HISTORY", purchase_history, overwrite = TRUE)
+# dbWriteTable(con, "STORAGE", storage, overwrite = TRUE)
 
 # Disconnect from the database
+#dbDisconnect(con)
+
+con <- dbConnect(RSQLite::SQLite(), "data/projectDB.db")
+dbListTables(con)
+
+dbWriteTable(
+  conn = con,
+  name = "BOOK",
+  value = book %>% mutate(publication_date = as.character(publication_date)),
+  append = TRUE
+)
+
+dbWriteTable(con, "CUSTOMER", 
+             customer, 
+             append = TRUE)
+
+dbWriteTable(con, "PUBLISHER", 
+             publisher, 
+             append = TRUE)
+
+dbWriteTable(con, "WAREHOUSE", 
+             warehouse,  
+             append = TRUE)
+
+dbWriteTable(con, "SHOPPING_CART", 
+             shopping_cart %>% 
+               select(-datetime), 
+             append = TRUE)
+
+dbWriteTable(con, "PURCHASE_HISTORY", 
+             purchase_history %>% 
+               mutate(datetime = as.character(datetime)), 
+             append = TRUE)
+
+dbWriteTable(con, "STORAGE", 
+             storage, 
+             append = TRUE)
+
+dbListTables(con)
+
 dbDisconnect(con)
-
-
 
 
 
