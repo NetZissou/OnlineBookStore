@@ -65,7 +65,19 @@ storage <- tibble(
 goodread_books <- read_csv("data/books.csv") %>%
   mutate(publication_date = mdy(publication_date)) %>%
   na.omit()
-
+book_data <- read_csv("data/book_data.csv", skip = 1) %>%
+  select(1:7) %>%
+  set_names(
+    c("ISBN", "title", "authors", 
+      "publisher_name", "year", "price", "category")
+  ) %>%
+  na.omit() %>%
+  mutate(
+    publication_date = ymd(paste0(year, "0101")),
+    price = parse_number(price)
+  ) %>%
+  select(ISBN, category, title, price, authors,
+         publisher_name, publication_date)
 categories <- c(
   'Action and Adventure',
   'Classics',
@@ -82,8 +94,16 @@ book <- goodread_books %>%
     price = ceiling(rnorm(nrow(goodread_books), mean = 75, sd = 30)),
     category = sample(categories, nrow(goodread_books), replace = T)
   ) %>%
-  select(ISBN = isbn, category, title, price, 
-         publisher_name = publisher, publication_date)
+  select(ISBN = isbn, category, title, price, authors,
+         publisher_name = publisher, publication_date) %>%
+  bind_rows(
+    book_data
+  ) %>%
+  group_by(ISBN) %>%
+  filter(publication_date == max(publication_date), 
+         price == max(price)) %>%
+  ungroup() %>%
+  filter(ISBN != "0743206061")
 
 
 national_names <- read_csv("data/NationalNames.csv")

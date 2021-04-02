@@ -13,6 +13,7 @@ CREATE TABLE BOOK
   category varchar(15),
   title varchar(50) not NULL,
   price integer not NULL,
+  authors varchar(30) not NULL,
   publisher_name varchar(30) not NULL,
   publication_date date,
   PRIMARY key(ISBN),
