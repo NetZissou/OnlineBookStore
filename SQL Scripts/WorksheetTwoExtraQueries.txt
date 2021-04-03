@@ -2,15 +2,31 @@
 Find the titles of the books held in warehouses in Columbus.
 πTitle(σCity=’Columbus’(Books ⨝Location=W_id Warehouse))
 
+SELECT BOOK.title 
+FROM BOOK
+LEFT join BOOK on BOOK.ISBN = WAREHOUSE.ISBN
+WHERE WAREHOUSE.city = "Columbus"
 
 
 2.
 Find the warehouse with the largest inventory of a book with the title “SQL”.
 	ℱMAX Quantity(σTitle=’SQL’(Warehouse ⨝W_id=location Books))
-
-
+	
+SELECT WAREHOUSE.W_id
+FROM WAREHOUSE
+WHERE WAREHOUSE.Stores IN (
+	SELECT max(WAREHOUSE.Stores)
+	FROM WAREHOUSE
+	WHERE BOOK.title = "SQL"
+)
 
 
 3.
 Gives the titles of all books published by a publisher “Pearson” and cost over $100
 πTitle(σName=’Pearson’ AND Price>100(Books ⨝PName=Name Publisher))
+
+SELECT BOOK.title
+FROM BOOK
+LEFT join BOOK on BOOK.ISBN = PUBLISHER.ISBN
+WHERE PUBLISHER.NAME = "Pearson"
+AND BOOK.price > 100
