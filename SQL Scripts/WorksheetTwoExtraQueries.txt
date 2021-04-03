@@ -1,1 +1,16 @@
+1.
+Find the titles of the books held in warehouses in Columbus.
+πTitle(σCity=’Columbus’(Books ⨝Location=W_id Warehouse))
 
+
+
+2.
+Find the warehouse with the largest inventory of a book with the title “SQL”.
+	ℱMAX Quantity(σTitle=’SQL’(Warehouse ⨝W_id=location Books))
+
+
+
+
+3.
+Gives the titles of all books published by a publisher “Pearson” and cost over $100
+πTitle(σName=’Pearson’ AND Price>100(Books ⨝PName=Name Publisher))
