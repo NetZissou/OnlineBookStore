@@ -63,7 +63,14 @@ CREATE TABLE WAREHOUSE
 );
 
 
-
+CREATE table SUBSCRIPTION
+(Account_id integer not NULL,
+ publisher_name varchar(15) NOT NULL,
+ 
+ PRIMARY KEY (Account_id, publisher_name)
+ FOREIGN key(publisher_name) REFERENCES PUBLISHER(name)
+ FOREIGN key(Account_id) REFERENCES CUSTOMER(Account_id)
+)
 
 
 
