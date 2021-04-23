@@ -24,3 +24,48 @@ String sql = "SELECT id FROM User WHERE user_id = ? AND passwd=?";
 PreparedStatement ps = conn.prepareStatement(sql);
 ps.setString(1, user);
 ps.setString(2, password);
+
+
+
+CREATE TABLE CUSTOMER 
+(custId integer not NULL,
+ fname varchar(15),
+ lname varchar(15),
+ addr varchar(15),
+ city varchar(15),
+ state varchar(15),
+ zip INTEGER
+PRIMARY key(custId)
+);
+
+CREATE TABLE ORDERS
+(
+  custId INTEGER NOT NULL,
+  prodId InTEGER NOT NULL,
+  orderId INTEGER NOT NULL,
+  qty INTEGER NOT NULL,
+  PRIMARY KEY (orderId),
+  FOREIGN KEy (prodId) REFERENCES INVENTORY(prodId),
+  FOREIGN KEY (custId) REFERENCES CUSTOMER(custId)
+)
+
+CREATE TABLE INVENTORY
+(
+ prodId Integer not NULL,
+  pname varchar(10),
+  qty_stock integer,
+  price integer,
+  typeId integer,
+  
+  PRIMARY key (prodID),
+  FOREIGN key (typeId) REFERENCES PROD_TYPES(typeId)
+)
+
+
+CREATE Table PROD_TYPES 
+(
+  typeId Integer not NULL,
+  tname varchar(15),
+  PRIMARY key (typeId)
+)
+
